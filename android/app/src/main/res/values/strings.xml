@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Einkaufsliste</string>
+    <string name="import_label">Liste importieren</string>
+    <string name="share_title">Liste teilen über …</string>
+</resources>
