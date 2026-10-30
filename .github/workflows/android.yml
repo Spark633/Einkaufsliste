@@ -3,7 +3,6 @@ name: Android-App bauen
 on:
   push:
     paths:
-      - 'web/**'
       - 'android/**'
       - '.github/workflows/android.yml'
   workflow_dispatch:
@@ -43,8 +42,8 @@ jobs:
       - name: Als GitHub-Release veröffentlichen
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.${{ env.BUILD_NUMBER }}
-          name: Einkaufsliste 1.0.${{ env.BUILD_NUMBER }}
+          tag_name: v2.0.${{ env.BUILD_NUMBER }}
+          name: Einkaufsliste 2.0.${{ env.BUILD_NUMBER }}
           target_commitish: ${{ github.sha }}
           make_latest: true
           files: Einkaufsliste.apk
