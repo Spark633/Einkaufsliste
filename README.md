@@ -1,10 +1,14 @@
 # Einkaufsliste
 
-Einfache Einkaufslisten-App für Android – ohne Konto, ohne Werbung, alle Daten bleiben auf dem Handy.
+Native Android-App (Kotlin, Jetpack Compose) für Einkaufs- und Packlisten – ohne Konto, ohne Werbung,
+alle Daten bleiben auf dem Handy.
 
 ## Funktionen
 
 - **Mehrere Listen** – z. B. pro Laden, für die Drogerie oder als Packliste, jeweils mit eigenem Symbol.
+- **Alle auf einen Blick** – Umschalter oben auf dem Startbildschirm: alle ausgewählten Listen stehen untereinander
+  (z. B. erst Rewe, darunter dm). Über ⋮ → „Listen anordnen & auswählen“ legst du fest, welche Listen dort erscheinen
+  und in welcher Reihenfolge. Mit dem ➕ neben jeder Liste trägst du direkt dort Artikel ein.
 - **Vorschläge beim Eintippen** – alles, was du einmal eingetragen hast, wird gespeichert und beim nächsten
   Mal vorgeschlagen (sortiert danach, wie oft du es kaufst und auf welcher Liste). Ein Tipp auf den Vorschlag fügt
   den Artikel hinzu. Im leeren Eingabefeld erscheinen deine häufigsten Artikel.
@@ -29,13 +33,12 @@ Bei jedem Push baut GitHub Actions automatisch die APK und veröffentlicht sie u
 
 ## Aufbau
 
-| Ordner | Inhalt |
+| Pfad | Inhalt |
 |---|---|
-| `web/` | Die eigentliche App (HTML/CSS/JavaScript). Läuft auch im Browser und lässt sich dort als Web-App installieren. |
-| `android/` | Schlanke Android-Hülle (WebView), die `web/` einbettet und Teilen, Zwischenablage und Vibration bereitstellt. |
-| `.github/workflows/android.yml` | Baut die APK und erstellt das Release. |
+| `android/app/src/main/java/de/einkaufsliste/app/data/` | Datenmodell, Speicherung (JSON-Datei im App-Speicher), Vorschläge, Teilen-Code |
+| `android/app/src/main/java/de/einkaufsliste/app/ui/` | Oberfläche (Jetpack Compose) |
+| `.github/workflows/android.yml` | Baut die APK und erstellt das Release |
 
-Lokal testen: `cd web && python3 -m http.server` und `http://localhost:8000` öffnen.
 Lokal bauen (Android-SDK nötig): `cd android && ./gradlew assembleRelease`.
 
 Der Signaturschlüssel `android/app/app.keystore` liegt bewusst im Repo, damit jede gebaute APK dieselbe Signatur
