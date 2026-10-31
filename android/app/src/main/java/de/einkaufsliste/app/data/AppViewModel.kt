@@ -65,7 +65,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     /* ---------------- Listen ---------------- */
 
     fun addList(name: String, emoji: String): String {
-        val list = ShoppingList(name = cleanName(name), emoji = emoji)
+        val list = ShoppingList(name = cleanName(name), emoji = emoji, inOverview = false)
         update { it.copy(lists = it.lists + list) }
         return list.id
     }
@@ -191,6 +191,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         val list = ShoppingList(
             name = if (nameTaken) "${shared.name} (geteilt)" else shared.name,
             emoji = shared.emoji,
+            inOverview = false,
             items = shared.items.map { (name, qty) -> Item(name = name, qty = qty) },
         )
         update { d -> shared.items.fold(d.copy(lists = d.lists + list)) { acc, (name, _) -> remember(acc, name, list.id) } }

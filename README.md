@@ -6,9 +6,10 @@ alle Daten bleiben auf dem Handy.
 ## Funktionen
 
 - **Mehrere Listen** – z. B. pro Laden, für die Drogerie oder als Packliste, jeweils mit eigenem Symbol.
-- **Alle auf einen Blick** – Umschalter oben auf dem Startbildschirm: alle ausgewählten Listen stehen untereinander
-  (z. B. erst Rewe, darunter dm). Über ⋮ → „Listen anordnen & auswählen“ legst du fest, welche Listen dort erscheinen
-  und in welcher Reihenfolge. Mit dem ➕ neben jeder Liste trägst du direkt dort Artikel ein.
+- **Mehrere Listen zusammen ansehen** – Umschalter „Zusammen“ oben auf dem Startbildschirm. Dort tippst du in der
+  Leiste oben die Listen an, die du gemeinsam sehen willst (z. B. Rewe und dm); sie stehen dann untereinander.
+  Nicht ausgewählte Listen (z. B. die Packliste) bleiben ausgeblendet. Mit dem ➕ neben jeder Liste trägst du direkt
+  dort Artikel ein. Die Reihenfolge änderst du über ⋮ → „Reihenfolge der Listen“.
 - **Vorschläge beim Eintippen** – alles, was du einmal eingetragen hast, wird gespeichert und beim nächsten
   Mal vorgeschlagen (sortiert danach, wie oft du es kaufst und auf welcher Liste). Ein Tipp auf den Vorschlag fügt
   den Artikel hinzu. Im leeren Eingabefeld erscheinen deine häufigsten Artikel.

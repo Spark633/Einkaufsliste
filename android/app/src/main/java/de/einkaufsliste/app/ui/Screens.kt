@@ -11,13 +11,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,6 +28,8 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -114,7 +119,7 @@ fun HomeScreen(vm: AppViewModel, a: AppActions, snackbar: SnackbarHostState) {
                 OverflowMenu(
                     listOf(
                         "➕  Neue Liste" to { a.showDialog(DialogState.EditList(null)) },
-                        "↕️  Listen anordnen & auswählen" to { a.showDialog(DialogState.Arrange) },
+                        "↕️  Reihenfolge der Listen" to { a.showDialog(DialogState.Arrange) },
                         "📥  Liste importieren" to { a.showDialog(DialogState.PasteImport) },
                         "💡  Vorschläge verwalten" to { a.showDialog(DialogState.History) },
                     )
@@ -141,7 +146,7 @@ fun HomeScreen(vm: AppViewModel, a: AppActions, snackbar: SnackbarHostState) {
                     selected = data.overviewMode,
                     onClick = { vm.setOverviewMode(true) },
                     shape = SegmentedButtonDefaults.itemShape(1, 2),
-                ) { Text("Alle auf einen Blick") }
+                ) { Text("Zusammen") }
             }
             if (data.overviewMode) OverviewContent(vm, a) else ListsContent(vm, a)
         }
@@ -190,19 +195,39 @@ private fun ListsContent(vm: AppViewModel, a: AppActions) {
     }
 }
 
-/** Alle ausgewählten Listen untereinander, z. B. erst Rewe, darunter dm. */
+/** Die ausgewählten Listen untereinander, z. B. erst Rewe, darunter dm. */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun OverviewContent(vm: AppViewModel, a: AppActions) {
-    val lists = vm.data.lists.filter { it.inOverview }
-    if (lists.isEmpty()) {
-        Column(Modifier.fillMaxWidth().padding(32.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                "Keine Liste für diese Ansicht ausgewählt.",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
+    val all = vm.data.lists
+    val lists = all.filter { it.inOverview }
+
+    // Auswahl: Welche Listen sollen zusammen angezeigt werden?
+    Text(
+        "Welche Listen zusammen anzeigen?",
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp),
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(bottom = 8.dp),
+    ) {
+        items(all, key = { it.id }) { list ->
+            FilterChip(
+                selected = list.inOverview,
+                onClick = { vm.setInOverview(list.id, !list.inOverview) },
+                label = { Text("${list.emoji} ${list.name}") },
+                leadingIcon = if (list.inOverview) {
+                    { Icon(Icons.Filled.Check, null, modifier = Modifier.size(FilterChipDefaults.IconSize)) }
+                } else null,
             )
-            TextButton(onClick = { a.showDialog(DialogState.Arrange) }) { Text("Listen auswählen") }
         }
+    }
+
+    if (lists.isEmpty()) {
+        EmptyHint("Tippe oben die Listen an, die du zusammen sehen möchtest – z. B. Rewe und dm.")
         return
     }
     LazyColumn(

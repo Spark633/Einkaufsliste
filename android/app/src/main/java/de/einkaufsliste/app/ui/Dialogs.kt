@@ -177,7 +177,7 @@ fun ArrangeDialog(vm: AppViewModel, onDismiss: () -> Unit) {
         text = {
             Column {
                 Text(
-                    "Haken = Liste erscheint in der Ansicht „Alle auf einen Blick“. Mit den Pfeilen änderst du die Reihenfolge.",
+                    "Mit den Pfeilen änderst du die Reihenfolge. Haken = Liste erscheint in der Ansicht „Zusammen“.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
