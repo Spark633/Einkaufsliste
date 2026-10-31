@@ -16,6 +16,11 @@ import kotlin.math.min
 /** Hält alle Listen und speichert sie bei jeder Änderung als JSON-Datei auf dem Gerät. */
 class AppViewModel(app: Application) : AndroidViewModel(app) {
 
+    companion object {
+        /** Ab so vielen Buchstaben erscheinen Vorschläge. */
+        const val MIN_QUERY = 2
+    }
+
     private val file = File(app.filesDir, "data.json")
     private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
 
@@ -167,25 +172,31 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             .firstNotNullOfOrNull { list(it.key) }
     }
 
-    /** Vorschläge nur aus Artikeln, die schon einmal auf genau dieser Liste standen. */
+    /**
+     * Vorschläge aus allen Listen, aber erst ab [MIN_QUERY] Buchstaben und nur, wenn der Name
+     * (oder ein Wort darin) mit dem Eingetippten beginnt. Artikel dieser Liste stehen vorne.
+     */
     fun suggestions(listId: String, query: String): List<HistoryEntry> {
         val list = list(listId) ?: return emptyList()
         val q = keyOf(query)
-        if (q.isEmpty()) return emptyList()
+        if (q.length < MIN_QUERY) return emptyList()
         val onList = list.items.filter { !it.done }.map { keyOf(it.name) }.toSet()
         return data.history.entries.mapNotNull { (key, h) ->
-            if (key in onList || (h.lists[listId] ?: 0) == 0) return@mapNotNull null
+            if (key in onList) return@mapNotNull null
             var score = when {
                 key.startsWith(q) -> 1000.0
                 key.split(Regex("[\\s-]+")).any { it.startsWith(q) } -> 600.0
-                key.contains(q) -> 300.0
                 else -> return@mapNotNull null
             }
             if (key == q) score += 500
-            score += min(h.count, 50) + (h.lists[listId] ?: 0) * 4 + h.last / 1e13
+            val hereCount = h.lists[listId] ?: 0
+            if (hereCount > 0) score += 300
+            score += min(h.count, 50) + hereCount * 4 + h.last / 1e13
             h to score
         }.sortedByDescending { it.second }.take(10).map { it.first }
     }
+
+    fun setSuggestionsCollapsed(collapsed: Boolean) = update { it.copy(suggestionsCollapsed = collapsed) }
 
     fun deleteHistory(key: String) = update { it.copy(history = it.history - key) }
 

@@ -10,9 +10,10 @@ alle Daten bleiben auf dem Handy.
   Leiste oben die Listen an, die du gemeinsam sehen willst (z. B. Rewe und dm); sie stehen dann untereinander.
   Nicht ausgewählte Listen (z. B. die Packliste) bleiben ausgeblendet. Mit dem ➕ neben jeder Liste trägst du direkt
   dort Artikel ein. Die Reihenfolge änderst du über ⋮ → „Reihenfolge der Listen“.
-- **Vorschläge beim Eintippen** – jede Liste merkt sich ihre Artikel. Sobald du tippst, schlägt sie passende Artikel
-  vor, die schon einmal auf **dieser** Liste standen (sortiert danach, wie oft du sie kaufst). Ein Tipp auf den
-  Vorschlag fügt den Artikel hinzu.
+- **Vorschläge beim Eintippen** – alles, was du einmal eingetragen hast, wird gemerkt. Ab dem zweiten Buchstaben
+  schlägt die App passende Artikel aus allen Listen vor (Artikel dieser Liste zuerst, Artikel anderer Listen mit deren
+  Symbol). Ein Tipp auf den Vorschlag fügt den Artikel hinzu. Über die Kopfzeile lassen sich die Vorschläge ein- und
+  ausklappen; die Einstellung bleibt gespeichert.
 - **Richtige Liste** – trägst du einen Artikel ein, der bisher immer auf einer anderen Liste stand (z. B. Zahnpasta
   bei dm, während du Rewe offen hast), fragt die App, ob er lieber dort hin soll.
 - **Erledigt markieren per Wischgeste** – Artikel **nach rechts wischen** = erledigt (bzw. zurückholen),

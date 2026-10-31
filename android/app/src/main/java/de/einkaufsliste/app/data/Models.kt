@@ -40,6 +40,8 @@ data class AppData(
     /** Startbildschirm zeigt alle Listen untereinander statt der Listenübersicht. */
     val overviewMode: Boolean = false,
     val seenSwipeHint: Boolean = false,
+    /** Vorschläge unter dem Eingabefeld eingeklappt. */
+    val suggestionsCollapsed: Boolean = false,
 )
 
 fun newId(): String = UUID.randomUUID().toString()

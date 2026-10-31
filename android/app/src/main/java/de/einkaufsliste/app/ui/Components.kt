@@ -2,6 +2,7 @@ package de.einkaufsliste.app.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
@@ -238,22 +241,41 @@ fun AddItemBar(
         }
 
         val suggestions = vm.suggestions(listId, text)
+        val collapsed = vm.data.suggestionsCollapsed
         if (suggestions.isNotEmpty()) {
             Card(
                 modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
             ) {
-                Column(Modifier.padding(12.dp)) {
-                    Text(
-                        "Schon mal auf dieser Liste – antippen zum Hinzufügen",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column(Modifier.padding(start = 12.dp, end = 4.dp, bottom = if (collapsed) 0.dp else 12.dp)) {
+                    // Kopfzeile zum Ein-/Ausklappen; der Zustand bleibt gespeichert
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { vm.setSuggestionsCollapsed(!collapsed) },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            if (collapsed) "${suggestions.size} Vorschläge – zum Anzeigen tippen"
+                            else "Vorschläge – antippen zum Hinzufügen",
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Icon(
+                            if (collapsed) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
+                            contentDescription = if (collapsed) "Vorschläge anzeigen" else "Vorschläge einklappen",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(10.dp),
+                        )
+                    }
+                    if (!collapsed) FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         suggestions.forEach { h ->
+                            // Artikel von anderen Listen bekommen das Symbol ihrer üblichen Liste
+                            val other = vm.usualListFor(listId, h.name)
                             SuggestionChip(
                                 onClick = { add(h.name) },
-                                label = { Text(h.name, fontSize = 15.sp) },
+                                label = { Text(if (other != null) "${h.name}  ${other.emoji}" else h.name, fontSize = 15.sp) },
                                 colors = SuggestionChipDefaults.suggestionChipColors(
                                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 ),
