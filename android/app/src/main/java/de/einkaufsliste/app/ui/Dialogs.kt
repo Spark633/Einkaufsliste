@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -263,18 +264,20 @@ fun HistoryDialog(vm: AppViewModel, onDismiss: () -> Unit) {
 
 /** Geteilte Nachricht per Einfügen importieren. */
 @Composable
-fun PasteImportDialog(onDismiss: () -> Unit, onImport: (String) -> Unit) {
+fun PasteImportDialog(onDismiss: () -> Unit, onScan: () -> Unit, onImport: (String) -> Unit) {
     val clipboard = LocalClipboardManager.current
     var text by remember {
-        mutableStateOf(clipboard.getText()?.text?.takeIf { "EKL1:" in it } ?: "")
+        mutableStateOf(clipboard.getText()?.text?.takeIf { "EKL1:" in it || "EKL2:" in it } ?: "")
     }
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Liste importieren") },
+        title = { Text("Listen importieren") },
         text = {
             Column {
+                Button(onClick = onScan, modifier = Modifier.fillMaxWidth()) { Text("🔳  QR-Code scannen") }
+                Spacer(Modifier.height(16.dp))
                 Text(
-                    "Füge die geteilte Nachricht hier ein (lange tippen → Einfügen).",
+                    "Oder die geteilte Nachricht hier einfügen (lange tippen → Einfügen).",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

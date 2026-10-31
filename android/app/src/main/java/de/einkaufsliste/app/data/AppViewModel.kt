@@ -30,8 +30,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     var data by mutableStateOf(load())
         private set
 
-    /** Empfangene Liste, für die gerade der Import-Dialog angezeigt wird. */
-    var pendingImport by mutableStateOf<SharedList?>(null)
+    /** Empfangene Listen, für die gerade der Import-Dialog angezeigt wird. */
+    var pendingImport by mutableStateOf<List<SharedList>?>(null)
 
     private fun load(): AppData = try {
         if (file.exists()) json.decodeFromString(AppData.serializer(), file.readText()) else AppData()
@@ -237,5 +237,14 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         shared.items.forEach { (name, qty) -> if (addItem(listId, name, qty)) added++ }
         pendingImport = null
         return added
+    }
+
+    /** Mehrere Listen übernehmen: gleichnamige Listen werden ergänzt, andere neu angelegt. */
+    fun importAll(shared: List<SharedList>) {
+        shared.forEach { s ->
+            val same = data.lists.find { keyOf(it.name) == keyOf(s.name) }
+            if (same != null) importInto(s, same.id) else importAsNew(s)
+        }
+        pendingImport = null
     }
 }

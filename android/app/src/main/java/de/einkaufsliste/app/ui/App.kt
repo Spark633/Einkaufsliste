@@ -45,6 +45,8 @@ sealed interface DialogState {
     data object Arrange : DialogState
     data object History : DialogState
     data object PasteImport : DialogState
+    data class Share(val preselected: Set<String>) : DialogState
+    data class Qr(val listIds: List<String>) : DialogState
 }
 
 /** Alles, was die Bildschirme auslösen können. */
@@ -104,14 +106,20 @@ class AppActions(
         message("Liste kopiert")
     }
 
-    fun share(list: ShoppingList) {
+    fun share(list: ShoppingList?) = showDialog(DialogState.Share(setOfNotNull(list?.id)))
+
+    fun sendText(lists: List<ShoppingList>) {
         val send = Intent(Intent.ACTION_SEND).apply {
             type = "text/plain"
-            putExtra(Intent.EXTRA_SUBJECT, list.name)
-            putExtra(Intent.EXTRA_TEXT, ShareCode.text(list))
+            putExtra(Intent.EXTRA_SUBJECT, lists.joinToString(", ") { it.name })
+            putExtra(Intent.EXTRA_TEXT, ShareCode.text(lists))
         }
-        context.startActivity(Intent.createChooser(send, "Liste teilen über …"))
+        context.startActivity(Intent.createChooser(send, "Listen teilen über …"))
     }
+
+    fun scan() = scanQr(context, onResult = { text ->
+        if (!vm.receiveShared(text)) message("Dieser QR-Code enthält keine Liste")
+    }, onError = ::message)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -219,15 +227,39 @@ fun App(vm: AppViewModel) {
         }
         DialogState.Arrange -> ArrangeDialog(vm, onDismiss = close)
         DialogState.History -> HistoryDialog(vm, onDismiss = close)
+        is DialogState.Share -> ShareDialog(
+            lists = vm.data.lists,
+            preselected = d.preselected,
+            onDismiss = close,
+            onSendText = { close(); actions.sendText(it) },
+            onShowQr = { lists -> dialog = DialogState.Qr(lists.map { it.id }) },
+        )
+        is DialogState.Qr -> {
+            val lists = d.listIds.mapNotNull { vm.list(it) }
+            QrDialog(lists, onDismiss = close, onSendText = { close(); actions.sendText(lists) })
+        }
         DialogState.PasteImport -> PasteImportDialog(
             onDismiss = close,
+            onScan = { close(); actions.scan() },
             onImport = { text ->
                 if (vm.receiveShared(text)) close() else actions.message("Kein gültiger Listen-Code gefunden")
             },
         )
     }
 
-    vm.pendingImport?.let { shared ->
+    val pending = vm.pendingImport
+    if (pending != null && pending.size > 1) {
+        MultiImportDialog(
+            shared = pending,
+            lists = vm.data.lists,
+            onDismiss = { vm.pendingImport = null },
+            onImport = {
+                vm.importAll(pending)
+                actions.message("${pending.size} Listen übernommen")
+            },
+        )
+    }
+    pending?.singleOrNull()?.let { shared ->
         ImportChoiceDialog(
             shared = shared,
             lists = vm.data.lists,

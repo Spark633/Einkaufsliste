@@ -124,7 +124,8 @@ fun HomeScreen(vm: AppViewModel, a: AppActions, snackbar: SnackbarHostState) {
                     listOf(
                         "➕  Neue Liste" to { a.showDialog(DialogState.EditList(null)) },
                         "↕️  Reihenfolge der Listen" to { a.showDialog(DialogState.Arrange) },
-                        "📥  Liste importieren" to { a.showDialog(DialogState.PasteImport) },
+                        "📤  Listen teilen / exportieren" to { a.share(null) },
+                        "📥  Listen importieren" to { a.showDialog(DialogState.PasteImport) },
                         "💡  Vorschläge verwalten" to { a.showDialog(DialogState.History) },
                         (if (data.showRecentDone) "🙈  Zuletzt Erledigte ausblenden" else "👁️  Zuletzt Erledigte anzeigen") to {
                             vm.setShowRecentDone(!data.showRecentDone)

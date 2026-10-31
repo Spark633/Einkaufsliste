@@ -25,10 +25,14 @@ alle Daten bleiben auf dem Handy.
 - **Zuletzt erledigt** – falls du versehentlich etwas abgehakt hast: In der Ansicht „Zusammen“ stehen unter jeder
   Liste die letzten 3 erledigten Artikel (über ⋮ ein-/ausblendbar), in der einzelnen Liste ebenfalls die letzten 3 mit
   „Alle anzeigen“. Zur Seite wischen holt einen Artikel zurück.
-- **Listen teilen** – über das Menü ⋮ → „Liste teilen“ (WhatsApp, Signal, E-Mail …). Die Nachricht enthält die
-  lesbare Liste und einen Code. Wer die App hat, kann die Nachricht in WhatsApp lange drücken → Teilen →
-  *Einkaufsliste* wählen, oder sie kopieren und in der App „Liste importieren“ nutzen. Die Liste kann als neue Liste
-  angelegt oder in eine gleichnamige Liste übernommen werden.
+- **Listen teilen / exportieren** – über ⋮ → „Listen teilen“ eine oder mehrere Listen auswählen und dann
+  - **als Nachricht senden** (WhatsApp, Signal, E-Mail …): enthält die lesbaren Listen und einen Code. Wer die App hat,
+    drückt die Nachricht lange → Teilen → *Einkaufsliste*, oder kopiert sie und nutzt „Listen importieren“.
+  - **als QR-Code anzeigen**: Auf dem anderen Handy ⋮ → „Listen importieren“ → „QR-Code scannen“ (nutzt den Scanner
+    der Google Play-Dienste, keine Kamera-Berechtigung nötig).
+
+  Eine einzelne Liste kann als neue Liste angelegt oder in eine gleichnamige übernommen werden; bei mehreren Listen
+  werden vorhandene ergänzt und die übrigen neu angelegt.
 - **Vorschläge verwalten** – falsch geschriebene oder nicht mehr gebrauchte Vorschläge lassen sich löschen.
 - Heller und dunkler Modus (folgt der Systemeinstellung).
 
