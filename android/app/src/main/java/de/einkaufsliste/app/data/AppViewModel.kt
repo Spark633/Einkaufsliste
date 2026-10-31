@@ -173,16 +173,19 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     /**
-     * Vorschläge aus allen Listen, aber erst ab [MIN_QUERY] Buchstaben und nur, wenn der Name
-     * (oder ein Wort darin) mit dem Eingetippten beginnt. Artikel dieser Liste stehen vorne.
+     * Vorschläge aus allen Listen mit demselben Symbol (z. B. alle 🛒-Listen), aber erst ab
+     * [MIN_QUERY] Buchstaben und nur, wenn der Name (oder ein Wort darin) mit dem Eingetippten
+     * beginnt. Artikel dieser Liste stehen vorne.
      */
     fun suggestions(listId: String, query: String): List<HistoryEntry> {
         val list = list(listId) ?: return emptyList()
         val q = keyOf(query)
         if (q.length < MIN_QUERY) return emptyList()
         val onList = list.items.filter { !it.done }.map { keyOf(it.name) }.toSet()
+        val sameIcon = data.lists.filter { it.emoji == list.emoji }.map { it.id }.toSet()
         return data.history.entries.mapNotNull { (key, h) ->
             if (key in onList) return@mapNotNull null
+            if (h.lists.none { (id, count) -> id in sameIcon && count > 0 }) return@mapNotNull null
             var score = when {
                 key.startsWith(q) -> 1000.0
                 key.split(Regex("[\\s-]+")).any { it.startsWith(q) } -> 600.0
