@@ -58,6 +58,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.einkaufsliste.app.data.AppViewModel
+import de.einkaufsliste.app.data.RECENT_DONE
 import de.einkaufsliste.app.data.ShoppingList
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -122,6 +123,9 @@ fun HomeScreen(vm: AppViewModel, a: AppActions, snackbar: SnackbarHostState) {
                         "↕️  Reihenfolge der Listen" to { a.showDialog(DialogState.Arrange) },
                         "📥  Liste importieren" to { a.showDialog(DialogState.PasteImport) },
                         "💡  Vorschläge verwalten" to { a.showDialog(DialogState.History) },
+                        (if (data.showRecentDone) "🙈  Zuletzt Erledigte ausblenden" else "👁️  Zuletzt Erledigte anzeigen") to {
+                            vm.setShowRecentDone(!data.showRecentDone)
+                        },
                     )
                 )
             }
@@ -236,7 +240,10 @@ private fun OverviewContent(vm: AppViewModel, a: AppActions) {
     ) {
         lists.forEachIndexed { index, list ->
             val open = list.items.filter { !it.done }
-            val done = list.items.size - open.size
+            // erledigte Artikel stehen neueste zuerst in der Liste
+            val doneItems = list.items.filter { it.done }
+            val done = doneItems.size
+            val recent = if (vm.data.showRecentDone) doneItems.take(RECENT_DONE) else emptyList()
             item(key = "head-${list.id}") {
                 Row(
                     modifier = Modifier
@@ -275,9 +282,25 @@ private fun OverviewContent(vm: AppViewModel, a: AppActions) {
                     modifier = Modifier.animateItem(),
                 )
             }
-            if (done > 0) {
+            if (recent.isNotEmpty()) {
+                item(key = "recent-${list.id}") {
+                    Text(
+                        "Zuletzt erledigt – zur Seite wischen zum Zurückholen",
+                        modifier = Modifier.padding(start = 4.dp, top = 6.dp),
+                        fontSize = 13.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                items(recent, key = { "${list.id}-${it.id}" }) { item ->
+                    ItemRow(item, { a.toggle(list.id, item) }, { a.edit(list.id, item) }, Modifier.animateItem())
+                }
+            }
+            if (done > recent.size) {
                 item(key = "done-${list.id}") {
-                    TextButton(onClick = { a.openList(list.id) }) { Text("$done erledigt – Liste öffnen") }
+                    val more = done - recent.size
+                    TextButton(onClick = { a.openList(list.id) }) {
+                        Text(if (recent.isEmpty()) "$done erledigt – Liste öffnen" else "$more weitere erledigt – Liste öffnen")
+                    }
                 }
             }
         }
@@ -292,6 +315,8 @@ private fun OverviewContent(vm: AppViewModel, a: AppActions) {
 fun ListScreen(vm: AppViewModel, list: ShoppingList, a: AppActions, snackbar: SnackbarHostState, onBack: () -> Unit) {
     val open = list.items.filter { !it.done }
     val done = list.items.filter { it.done }
+    var showAllDone by remember(list.id) { mutableStateOf(false) }
+    val visibleDone = if (showAllDone) done else done.take(RECENT_DONE)
 
     Scaffold(
         topBar = {
@@ -338,7 +363,7 @@ fun ListScreen(vm: AppViewModel, list: ShoppingList, a: AppActions, snackbar: Sn
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                "Erledigt (${done.size})",
+                                if (done.size > RECENT_DONE && !showAllDone) "Zuletzt erledigt (${done.size})" else "Erledigt (${done.size})",
                                 modifier = Modifier.weight(1f),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 14.sp,
@@ -346,8 +371,15 @@ fun ListScreen(vm: AppViewModel, list: ShoppingList, a: AppActions, snackbar: Sn
                             TextButton(onClick = { a.clearDone(list.id) }) { Text("Erledigte entfernen") }
                         }
                     }
-                    items(done, key = { it.id }) { item ->
+                    items(visibleDone, key = { it.id }) { item ->
                         ItemRow(item, { a.toggle(list.id, item) }, { a.edit(list.id, item) }, Modifier.animateItem())
+                    }
+                    if (done.size > RECENT_DONE) {
+                        item(key = "done-more") {
+                            TextButton(onClick = { showAllDone = !showAllDone }) {
+                                Text(if (showAllDone) "Nur die letzten $RECENT_DONE anzeigen" else "Alle ${done.size} erledigten anzeigen")
+                            }
+                        }
                     }
                 }
             }

@@ -196,6 +196,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         }.sortedByDescending { it.second }.take(10).map { it.first }
     }
 
+    fun setShowRecentDone(show: Boolean) = update { it.copy(showRecentDone = show) }
+
     fun setSuggestionsCollapsed(collapsed: Boolean) = update { it.copy(suggestionsCollapsed = collapsed) }
 
     fun deleteHistory(key: String) = update { it.copy(history = it.history - key) }
