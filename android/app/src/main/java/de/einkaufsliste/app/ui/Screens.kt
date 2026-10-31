@@ -102,6 +102,9 @@ private fun OverflowMenu(entries: List<Pair<String, () -> Unit>>, tint: Color? =
 private fun listMenu(list: ShoppingList, a: AppActions): List<Pair<String, () -> Unit>> = listOf(
     "📤  Liste teilen" to { a.share(list) },
     "✏️  Umbenennen / Symbol" to { a.showDialog(DialogState.EditList(list.id)) },
+    (if (list.alphabetical) "🕒  Neueste zuerst sortieren" else "🔤  Alphabetisch sortieren") to {
+        a.setAlphabetical(list.id, !list.alphabetical)
+    },
     "📄  Liste kopieren" to { a.duplicate(list.id) },
     "🗑️  Liste löschen" to { a.showDialog(DialogState.DeleteList(list.id)) },
 )
@@ -239,7 +242,7 @@ private fun OverviewContent(vm: AppViewModel, a: AppActions) {
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
         lists.forEachIndexed { index, list ->
-            val open = list.items.filter { !it.done }
+            val open = list.openItemsSorted()
             // erledigte Artikel stehen neueste zuerst in der Liste
             val doneItems = list.items.filter { it.done }
             val done = doneItems.size
@@ -313,7 +316,7 @@ private fun OverviewContent(vm: AppViewModel, a: AppActions) {
 
 @Composable
 fun ListScreen(vm: AppViewModel, list: ShoppingList, a: AppActions, snackbar: SnackbarHostState, onBack: () -> Unit) {
-    val open = list.items.filter { !it.done }
+    val open = list.openItemsSorted()
     val done = list.items.filter { it.done }
     var showAllDone by remember(list.id) { mutableStateOf(false) }
     val visibleDone = if (showAllDone) done else done.take(RECENT_DONE)
@@ -322,10 +325,10 @@ fun ListScreen(vm: AppViewModel, list: ShoppingList, a: AppActions, snackbar: Sn
         topBar = {
             GreenTopBar("${list.emoji} ${list.name}", onBack = onBack) {
                 OverflowMenu(
-                    listMenu(list, a).take(2) + listOf(
+                    listMenu(list, a).take(3) + listOf(
                         "↩️  Alle Erledigten zurückholen" to { a.uncheckAll(list.id) },
                         "🧹  Erledigte entfernen" to { a.clearDone(list.id) },
-                    ) + listMenu(list, a).drop(2)
+                    ) + listMenu(list, a).drop(3)
                 )
             }
         },

@@ -97,6 +97,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         d.copy(lists = lists)
     }
 
+    fun setAlphabetical(id: String, on: Boolean) = updateList(id) { it.copy(alphabetical = on) }
+
     fun setInOverview(id: String, show: Boolean) = updateList(id) { it.copy(inOverview = show) }
 
     fun setOverviewMode(on: Boolean) = update { it.copy(overviewMode = on) }

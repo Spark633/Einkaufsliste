@@ -6,6 +6,8 @@ alle Daten bleiben auf dem Handy.
 ## Funktionen
 
 - **Mehrere Listen** – z. B. pro Laden, für die Drogerie oder als Packliste, jeweils mit eigenem Symbol.
+- **Sortierung** – neue Artikel stehen oben. Pro Liste lässt sich über ⋮ auf „Alphabetisch sortieren“ umstellen
+  (und zurück auf „Neueste zuerst“).
 - **Mehrere Listen zusammen ansehen** – Umschalter „Zusammen“ oben auf dem Startbildschirm. Dort tippst du in der
   Leiste oben die Listen an, die du gemeinsam sehen willst (z. B. Rewe und dm); sie stehen dann untereinander.
   Nicht ausgewählte Listen (z. B. die Packliste) bleiben ausgeblendet. Mit dem ➕ neben jeder Liste trägst du direkt

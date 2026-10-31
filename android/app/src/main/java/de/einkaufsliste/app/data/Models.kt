@@ -1,6 +1,7 @@
 package de.einkaufsliste.app.data
 
 import kotlinx.serialization.Serializable
+import java.text.Collator
 import java.util.Locale
 import java.util.UUID
 
@@ -20,7 +21,17 @@ data class ShoppingList(
     val items: List<Item> = emptyList(),
     /** Wird in der Ansicht „Alle auf einen Blick“ angezeigt. */
     val inOverview: Boolean = true,
-)
+    /** Offene Artikel alphabetisch statt „neueste zuerst“ anzeigen. */
+    val alphabetical: Boolean = false,
+) {
+    /** Offene Artikel in Anzeigereihenfolge. Neue Artikel werden hinten angehängt, daher umgedreht. */
+    fun openItemsSorted(): List<Item> {
+        val open = items.filter { !it.done }
+        return if (alphabetical) open.sortedWith(compareBy(GERMAN_COLLATOR) { it.name }) else open.reversed()
+    }
+}
+
+private val GERMAN_COLLATOR: Collator = Collator.getInstance(Locale.GERMAN)
 
 /** Ein gemerkter Artikel für die Vorschläge beim Eintippen. */
 @Serializable

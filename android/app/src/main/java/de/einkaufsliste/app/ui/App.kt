@@ -94,6 +94,11 @@ class AppActions(
 
     fun uncheckAll(listId: String) = undoable("Alle Artikel wieder auf der Liste") { vm.uncheckAll(listId) }
 
+    fun setAlphabetical(listId: String, on: Boolean) {
+        vm.setAlphabetical(listId, on)
+        message(if (on) "Alphabetisch sortiert" else "Neueste Artikel oben")
+    }
+
     fun duplicate(listId: String) {
         vm.duplicateList(listId)
         message("Liste kopiert")
