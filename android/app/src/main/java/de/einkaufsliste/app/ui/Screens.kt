@@ -271,7 +271,6 @@ private fun OverviewContent(vm: AppViewModel, a: AppActions) {
                 ItemRow(
                     item = item,
                     onToggle = { a.toggle(list.id, item) },
-                    onDelete = { a.delete(list.id, item) },
                     onClick = { a.edit(list.id, item) },
                     modifier = Modifier.animateItem(),
                 )
@@ -319,12 +318,12 @@ fun ListScreen(vm: AppViewModel, list: ShoppingList, a: AppActions, snackbar: Sn
                     }
                 }
                 items(open, key = { it.id }) { item ->
-                    ItemRow(item, { a.toggle(list.id, item) }, { a.delete(list.id, item) }, { a.edit(list.id, item) }, Modifier.animateItem())
+                    ItemRow(item, { a.toggle(list.id, item) }, { a.edit(list.id, item) }, Modifier.animateItem())
                 }
                 if (open.isNotEmpty() && !vm.data.seenSwipeHint) {
                     item(key = "hint") {
                         Text(
-                            "Tipp: Artikel nach rechts wischen = erledigt,\nnach links wischen = löschen, antippen = bearbeiten.",
+                            "Tipp: Artikel zur Seite wischen = erledigt,\nantippen = bearbeiten oder löschen.",
                             modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
                             textAlign = TextAlign.Center,
                             fontSize = 14.sp,
@@ -348,7 +347,7 @@ fun ListScreen(vm: AppViewModel, list: ShoppingList, a: AppActions, snackbar: Sn
                         }
                     }
                     items(done, key = { it.id }) { item ->
-                        ItemRow(item, { a.toggle(list.id, item) }, { a.delete(list.id, item) }, { a.edit(list.id, item) }, Modifier.animateItem())
+                        ItemRow(item, { a.toggle(list.id, item) }, { a.edit(list.id, item) }, Modifier.animateItem())
                     }
                 }
             }

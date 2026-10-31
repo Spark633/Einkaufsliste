@@ -16,9 +16,10 @@ alle Daten bleiben auf dem Handy.
   ausklappen; die Einstellung bleibt gespeichert.
 - **Richtige Liste** – trägst du einen Artikel ein, der bisher immer auf einer anderen Liste stand (z. B. Zahnpasta
   bei dm, während du Rewe offen hast), fragt die App, ob er lieber dort hin soll.
-- **Erledigt markieren per Wischgeste** – Artikel **nach rechts wischen** = erledigt (bzw. zurückholen),
-  **nach links wischen** = löschen (mit Sicherheitsabfrage). Ein normales Antippen öffnet nur den Bearbeiten-Dialog (Name, Menge/Notiz),
-  dadurch wird nichts versehentlich abgehakt. Vor jedem Löschen kommt eine Rückfrage, danach lässt sich jede Aktion über „Rückgängig“ zurücknehmen.
+- **Erledigt markieren per Wischgeste** – Artikel **zur Seite wischen** (egal ob links oder rechts) = erledigt bzw.
+  zurückholen. Ein normales Antippen öffnet nur den Bearbeiten-Dialog (Name, Menge/Notiz); nur dort kann ein Artikel
+  gelöscht werden – mit Sicherheitsabfrage. So wird nichts versehentlich abgehakt oder gelöscht. Jede Aktion lässt sich
+  über „Rückgängig“ zurücknehmen.
 - **Listen teilen** – über das Menü ⋮ → „Liste teilen“ (WhatsApp, Signal, E-Mail …). Die Nachricht enthält die
   lesbare Liste und einen Code. Wer die App hat, kann die Nachricht in WhatsApp lange drücken → Teilen →
   *Einkaufsliste* wählen, oder sie kopieren und in der App „Liste importieren“ nutzen. Die Liste kann als neue Liste

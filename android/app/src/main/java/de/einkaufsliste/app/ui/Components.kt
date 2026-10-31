@@ -23,7 +23,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Refresh
@@ -69,36 +68,26 @@ import de.einkaufsliste.app.data.Item
 import de.einkaufsliste.app.data.ShoppingList
 
 /**
- * Ein Artikel. Nach rechts wischen = erledigt umschalten, nach links wischen = löschen,
- * antippen = bearbeiten. Ein einfacher Tipp hakt also nie etwas ab.
+ * Ein Artikel. In beliebige Richtung wischen = erledigt umschalten, antippen = bearbeiten
+ * (dort kann auch gelöscht werden). Ein einfacher Tipp hakt also nie etwas ab.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemRow(
     item: Item,
     onToggle: () -> Unit,
-    onDelete: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val toggle by rememberUpdatedState(onToggle)
-    val delete by rememberUpdatedState(onDelete)
     val haptic = LocalHapticFeedback.current
     val state = rememberSwipeToDismissBoxState(positionalThreshold = { it * 0.35f })
 
     LaunchedEffect(state.currentValue) {
-        when (state.currentValue) {
-            SwipeToDismissBoxValue.StartToEnd -> {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                toggle()
-                state.snapTo(SwipeToDismissBoxValue.Settled)
-            }
-            SwipeToDismissBoxValue.EndToStart -> {
-                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                delete()
-                state.snapTo(SwipeToDismissBoxValue.Settled)
-            }
-            SwipeToDismissBoxValue.Settled -> Unit
+        if (state.currentValue != SwipeToDismissBoxValue.Settled) {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            toggle()
+            state.snapTo(SwipeToDismissBoxValue.Settled)
         }
     }
 
@@ -106,24 +95,19 @@ fun ItemRow(
         state = state,
         modifier = modifier.clip(RoundedCornerShape(12.dp)),
         backgroundContent = {
+            // Beide Richtungen bedeuten dasselbe; der Hinweis steht auf der freigelegten Seite
             val toStart = state.dismissDirection == SwipeToDismissBoxValue.EndToStart
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(if (toStart) MaterialTheme.colorScheme.error else DoneGreen)
+                    .background(DoneGreen)
                     .padding(horizontal = 20.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = if (toStart) Arrangement.End else Arrangement.Start,
             ) {
-                if (toStart) {
-                    Text("Löschen", color = Color.White, fontWeight = FontWeight.SemiBold)
-                    Spacer(Modifier.width(8.dp))
-                    Icon(Icons.Filled.Delete, null, tint = Color.White)
-                } else {
-                    Icon(if (item.done) Icons.Filled.Refresh else Icons.Filled.Check, null, tint = Color.White)
-                    Spacer(Modifier.width(8.dp))
-                    Text(if (item.done) "Zurückholen" else "Erledigt", color = Color.White, fontWeight = FontWeight.SemiBold)
-                }
+                Icon(if (item.done) Icons.Filled.Refresh else Icons.Filled.Check, null, tint = Color.White)
+                Spacer(Modifier.width(8.dp))
+                Text(if (item.done) "Zurückholen" else "Erledigt", color = Color.White, fontWeight = FontWeight.SemiBold)
             }
         },
     ) {
