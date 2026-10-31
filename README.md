@@ -10,12 +10,12 @@ alle Daten bleiben auf dem Handy.
   Leiste oben die Listen an, die du gemeinsam sehen willst (z. B. Rewe und dm); sie stehen dann untereinander.
   Nicht ausgewählte Listen (z. B. die Packliste) bleiben ausgeblendet. Mit dem ➕ neben jeder Liste trägst du direkt
   dort Artikel ein. Die Reihenfolge änderst du über ⋮ → „Reihenfolge der Listen“.
-- **Vorschläge beim Eintippen** – alles, was du einmal eingetragen hast, wird gespeichert und beim nächsten
-  Mal vorgeschlagen (sortiert danach, wie oft du es kaufst und auf welcher Liste). Ein Tipp auf den Vorschlag fügt
-  den Artikel hinzu. Im leeren Eingabefeld erscheinen deine häufigsten Artikel.
+- **Vorschläge beim Eintippen** – jede Liste merkt sich ihre Artikel. Sobald du tippst, schlägt sie passende Artikel
+  vor, die schon einmal auf **dieser** Liste standen (sortiert danach, wie oft du sie kaufst). Ein Tipp auf den
+  Vorschlag fügt den Artikel hinzu.
 - **Erledigt markieren per Wischgeste** – Artikel **nach rechts wischen** = erledigt (bzw. zurückholen),
-  **nach links wischen** = löschen. Ein normales Antippen öffnet nur den Bearbeiten-Dialog (Name, Menge/Notiz),
-  dadurch wird nichts versehentlich abgehakt. Jede Aktion lässt sich über „Rückgängig“ zurücknehmen.
+  **nach links wischen** = löschen (mit Sicherheitsabfrage). Ein normales Antippen öffnet nur den Bearbeiten-Dialog (Name, Menge/Notiz),
+  dadurch wird nichts versehentlich abgehakt. Vor jedem Löschen kommt eine Rückfrage, danach lässt sich jede Aktion über „Rückgängig“ zurücknehmen.
 - **Listen teilen** – über das Menü ⋮ → „Liste teilen“ (WhatsApp, Signal, E-Mail …). Die Nachricht enthält die
   lesbare Liste und einen Code. Wer die App hat, kann die Nachricht in WhatsApp lange drücken → Teilen →
   *Einkaufsliste* wählen, oder sie kopieren und in der App „Liste importieren“ nutzen. Die Liste kann als neue Liste

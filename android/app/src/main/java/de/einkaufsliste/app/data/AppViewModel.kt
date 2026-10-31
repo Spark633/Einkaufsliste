@@ -154,14 +154,15 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     /* ---------------- Vorschläge ---------------- */
 
+    /** Vorschläge nur aus Artikeln, die schon einmal auf genau dieser Liste standen. */
     fun suggestions(listId: String, query: String): List<HistoryEntry> {
         val list = list(listId) ?: return emptyList()
-        val onList = list.items.filter { !it.done }.map { keyOf(it.name) }.toSet()
         val q = keyOf(query)
+        if (q.isEmpty()) return emptyList()
+        val onList = list.items.filter { !it.done }.map { keyOf(it.name) }.toSet()
         return data.history.entries.mapNotNull { (key, h) ->
-            if (key in onList) return@mapNotNull null
+            if (key in onList || (h.lists[listId] ?: 0) == 0) return@mapNotNull null
             var score = when {
-                q.isEmpty() -> 0.0
                 key.startsWith(q) -> 1000.0
                 key.split(Regex("[\\s-]+")).any { it.startsWith(q) } -> 600.0
                 key.contains(q) -> 300.0
@@ -170,7 +171,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             if (key == q) score += 500
             score += min(h.count, 50) + (h.lists[listId] ?: 0) * 4 + h.last / 1e13
             h to score
-        }.sortedByDescending { it.second }.take(if (q.isEmpty()) 14 else 10).map { it.first }
+        }.sortedByDescending { it.second }.take(10).map { it.first }
     }
 
     fun deleteHistory(key: String) = update { it.copy(history = it.history - key) }

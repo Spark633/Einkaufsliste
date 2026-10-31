@@ -206,6 +206,7 @@ fun ArrangeDialog(vm: AppViewModel, onDismiss: () -> Unit) {
 fun HistoryDialog(vm: AppViewModel, onDismiss: () -> Unit) {
     val entries = vm.data.history.entries.sortedBy { it.value.name.lowercase() }
     var confirmClear by remember { mutableStateOf(false) }
+    var toDelete by remember { mutableStateOf<String?>(null) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -226,7 +227,7 @@ fun HistoryDialog(vm: AppViewModel, onDismiss: () -> Unit) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(h.name, modifier = Modifier.weight(1f))
                             Text("${h.count}×", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 13.sp)
-                            IconButton(onClick = { vm.deleteHistory(key) }) { Icon(Icons.Filled.Close, "Entfernen") }
+                            IconButton(onClick = { toDelete = key }) { Icon(Icons.Filled.Close, "Entfernen") }
                         }
                         HorizontalDivider()
                     }
@@ -238,6 +239,16 @@ fun HistoryDialog(vm: AppViewModel, onDismiss: () -> Unit) {
             if (entries.isNotEmpty()) TextButton(onClick = { confirmClear = true }) { Text("Alle löschen") }
         },
     )
+
+    toDelete?.let { key ->
+        ConfirmDialog(
+            title = "Vorschlag „${vm.data.history[key]?.name ?: key}“ löschen?",
+            text = "Der Artikel wird dann nicht mehr vorgeschlagen.",
+            confirmLabel = "Löschen",
+            onDismiss = { toDelete = null },
+            onConfirm = { vm.deleteHistory(key); toDelete = null },
+        )
+    }
 
     if (confirmClear) {
         ConfirmDialog(

@@ -50,7 +50,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -174,7 +173,6 @@ fun AddItemBar(
     autoFocus: Boolean = false,
 ) {
     var text by remember { mutableStateOf("") }
-    var focused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
 
     fun add(name: String) {
@@ -200,8 +198,7 @@ fun AddItemBar(
                 keyboardActions = KeyboardActions(onDone = { add(text) }),
                 modifier = Modifier
                     .weight(1f)
-                    .focusRequester(focusRequester)
-                    .onFocusChanged { focused = it.isFocused },
+                    .focusRequester(focusRequester),
             )
             Spacer(Modifier.width(8.dp))
             FilledIconButton(onClick = { add(text) }, modifier = Modifier.size(52.dp)) {
@@ -209,7 +206,7 @@ fun AddItemBar(
             }
         }
 
-        val suggestions = if (focused || text.isNotBlank()) vm.suggestions(listId, text) else emptyList()
+        val suggestions = vm.suggestions(listId, text)
         if (suggestions.isNotEmpty()) {
             Card(
                 modifier = Modifier.fillMaxWidth().padding(top = 10.dp),
@@ -217,7 +214,7 @@ fun AddItemBar(
             ) {
                 Column(Modifier.padding(12.dp)) {
                     Text(
-                        if (text.isBlank()) "Schon mal gekauft – antippen zum Hinzufügen" else "Vorschläge – antippen zum Hinzufügen",
+                        "Schon mal auf dieser Liste – antippen zum Hinzufügen",
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

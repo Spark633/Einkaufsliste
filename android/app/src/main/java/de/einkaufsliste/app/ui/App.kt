@@ -39,6 +39,8 @@ sealed interface DialogState {
     data class EditItem(val listId: String, val itemId: String) : DialogState
     data class EditList(val listId: String?) : DialogState
     data class DeleteList(val listId: String) : DialogState
+    data class DeleteItem(val listId: String, val itemId: String) : DialogState
+    data class ClearDone(val listId: String) : DialogState
     data class QuickAdd(val listId: String) : DialogState
     data object Arrange : DialogState
     data object History : DialogState
@@ -75,12 +77,17 @@ class AppActions(
     fun toggle(listId: String, item: Item) =
         undoable(if (item.done) "„${item.name}“ zurückgeholt" else "„${item.name}“ erledigt") { vm.toggleDone(listId, item.id) }
 
-    fun delete(listId: String, item: Item) =
+    /** Löschen immer erst nach Rückfrage. */
+    fun delete(listId: String, item: Item) = showDialog(DialogState.DeleteItem(listId, item.id))
+
+    fun confirmedDelete(listId: String, item: Item) =
         undoable("„${item.name}“ gelöscht") { vm.deleteItem(listId, item.id) }
 
     fun edit(listId: String, item: Item) = showDialog(DialogState.EditItem(listId, item.id))
 
-    fun clearDone(listId: String) {
+    fun clearDone(listId: String) = showDialog(DialogState.ClearDone(listId))
+
+    fun confirmedClearDone(listId: String) {
         val count = vm.list(listId)?.items?.count { it.done } ?: 0
         undoable("$count erledigte Artikel entfernt") { vm.clearDone(listId) }
     }
@@ -134,6 +141,26 @@ fun App(vm: AppViewModel) {
                 onSave = { name, qty -> vm.editItem(d.listId, item.id, name, qty); close() },
                 onToggle = { close(); actions.toggle(d.listId, item) },
                 onDelete = { close(); actions.delete(d.listId, item) },
+            )
+        }
+        is DialogState.DeleteItem -> {
+            val item = vm.list(d.listId)?.items?.find { it.id == d.itemId }
+            if (item == null) close() else ConfirmDialog(
+                title = "„${item.name}“ löschen?",
+                text = "Der Artikel wird von der Liste entfernt.",
+                confirmLabel = "Löschen",
+                onDismiss = close,
+                onConfirm = { close(); actions.confirmedDelete(d.listId, item) },
+            )
+        }
+        is DialogState.ClearDone -> {
+            val count = vm.list(d.listId)?.items?.count { it.done } ?: 0
+            ConfirmDialog(
+                title = "Erledigte entfernen?",
+                text = "$count erledigte Artikel werden von der Liste gelöscht.",
+                confirmLabel = "Entfernen",
+                onDismiss = close,
+                onConfirm = { close(); actions.confirmedClearDone(d.listId) },
             )
         }
         is DialogState.EditList -> EditListDialog(
