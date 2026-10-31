@@ -127,8 +127,8 @@ fun HomeScreen(vm: AppViewModel, a: AppActions, snackbar: SnackbarHostState) {
                         "📤  Listen teilen / exportieren" to { a.share(null) },
                         "📥  Listen importieren" to { a.showDialog(DialogState.PasteImport) },
                         "💡  Vorschläge verwalten" to { a.showDialog(DialogState.History) },
-                        (if (data.showRecentDone) "🙈  Zuletzt Erledigte ausblenden" else "👁️  Zuletzt Erledigte anzeigen") to {
-                            vm.setShowRecentDone(!data.showRecentDone)
+                        (if (data.overviewShowDone) "🙈  Erledigte in „Zusammen“ ausblenden" else "👁️  Erledigte in „Zusammen“ immer zeigen") to {
+                            vm.setOverviewShowDone(!data.overviewShowDone)
                         },
                     )
                 )
@@ -238,6 +238,8 @@ private fun OverviewContent(vm: AppViewModel, a: AppActions) {
         EmptyHint("Tippe oben die Listen an, die du zusammen sehen möchtest – z. B. Rewe und dm.")
         return
     }
+    // Listen, deren Erledigte gerade aufgeklappt sind (nur solange die Ansicht offen ist)
+    var expandedDone by remember { mutableStateOf(setOf<String>()) }
     LazyColumn(
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 40.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp),
@@ -247,7 +249,8 @@ private fun OverviewContent(vm: AppViewModel, a: AppActions) {
             // erledigte Artikel stehen neueste zuerst in der Liste
             val doneItems = list.items.filter { it.done }
             val done = doneItems.size
-            val recent = if (vm.data.showRecentDone) doneItems.take(RECENT_DONE) else emptyList()
+            val showDone = vm.data.overviewShowDone || list.id in expandedDone
+            val recent = if (showDone) doneItems.take(RECENT_DONE) else emptyList()
             item(key = "head-${list.id}") {
                 Row(
                     modifier = Modifier
@@ -286,24 +289,36 @@ private fun OverviewContent(vm: AppViewModel, a: AppActions) {
                     modifier = Modifier.animateItem(),
                 )
             }
+            if (done > 0 && !showDone) {
+                // Erledigte ausgeblendet: nur ein kleiner Knopf zum Aufklappen
+                item(key = "done-${list.id}") {
+                    TextButton(onClick = { expandedDone = expandedDone + list.id }) {
+                        Text("✓ $done erledigt – anzeigen")
+                    }
+                }
+            }
             if (recent.isNotEmpty()) {
                 item(key = "recent-${list.id}") {
-                    Text(
-                        "Zuletzt erledigt – zur Seite wischen zum Zurückholen",
-                        modifier = Modifier.padding(start = 4.dp, top = 6.dp),
-                        fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            "Zuletzt erledigt – zur Seite wischen zum Zurückholen",
+                            modifier = Modifier.weight(1f).padding(start = 4.dp),
+                            fontSize = 13.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        if (!vm.data.overviewShowDone) {
+                            TextButton(onClick = { expandedDone = expandedDone - list.id }) { Text("Ausblenden") }
+                        }
+                    }
                 }
                 items(recent, key = { "${list.id}-${it.id}" }) { item ->
                     ItemRow(item, { a.toggle(list.id, item) }, { a.edit(list.id, item) }, Modifier.animateItem())
                 }
-            }
-            if (done > recent.size) {
-                item(key = "done-${list.id}") {
-                    val more = done - recent.size
-                    TextButton(onClick = { a.openList(list.id) }) {
-                        Text(if (recent.isEmpty()) "$done erledigt – Liste öffnen" else "$more weitere erledigt – Liste öffnen")
+                if (done > recent.size) {
+                    item(key = "more-${list.id}") {
+                        TextButton(onClick = { a.openList(list.id) }) {
+                            Text("${done - recent.size} weitere erledigt – Liste öffnen")
+                        }
                     }
                 }
             }

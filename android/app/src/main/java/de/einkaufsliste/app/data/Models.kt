@@ -53,8 +53,11 @@ data class AppData(
     val seenSwipeHint: Boolean = false,
     /** Vorschläge unter dem Eingabefeld eingeklappt. */
     val suggestionsCollapsed: Boolean = false,
-    /** In der Ansicht „Zusammen“ die zuletzt erledigten Artikel jeder Liste zeigen. */
-    val showRecentDone: Boolean = true,
+    /**
+     * In der Ansicht „Zusammen“ die zuletzt erledigten Artikel jeder Liste immer zeigen.
+     * Standardmäßig ausgeblendet; pro Liste lassen sie sich trotzdem kurz aufklappen.
+     */
+    val overviewShowDone: Boolean = false,
 )
 
 /** So viele zuletzt erledigte Artikel werden angezeigt, bevor man „alle anzeigen“ tippen muss. */

@@ -24,9 +24,10 @@ alle Daten bleiben auf dem Handy.
   zurückholen. Ein normales Antippen öffnet nur den Bearbeiten-Dialog (Name, Menge/Notiz); nur dort kann ein Artikel
   gelöscht werden – mit Sicherheitsabfrage. So wird nichts versehentlich abgehakt oder gelöscht. Jede Aktion lässt sich
   über „Rückgängig“ zurücknehmen.
-- **Zuletzt erledigt** – falls du versehentlich etwas abgehakt hast: In der Ansicht „Zusammen“ stehen unter jeder
-  Liste die letzten 3 erledigten Artikel (über ⋮ ein-/ausblendbar), in der einzelnen Liste ebenfalls die letzten 3 mit
-  „Alle anzeigen“. Zur Seite wischen holt einen Artikel zurück.
+- **Zuletzt erledigt** – falls du versehentlich etwas abgehakt hast: In der Ansicht „Zusammen“ sind erledigte Artikel
+  ausgeblendet; „✓ 3 erledigt – anzeigen“ unter einer Liste klappt die letzten 3 auf (über ⋮ lassen sie sich auch immer
+  einblenden). In der einzelnen Liste stehen die letzten 3 unten, mit „Alle anzeigen“. Zur Seite wischen holt einen
+  Artikel zurück.
 - **Listen teilen / exportieren** – über ⋮ → „Listen teilen“ eine oder mehrere Listen auswählen und dann
   - **als Nachricht senden** (WhatsApp, Signal, E-Mail …): enthält die lesbaren Listen und einen Code. Wer die App hat,
     drückt die Nachricht lange → Teilen → *Einkaufsliste*, oder kopiert sie und nutzt „Listen importieren“.

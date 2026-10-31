@@ -201,7 +201,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         }.sortedByDescending { it.second }.take(10).map { it.first }
     }
 
-    fun setShowRecentDone(show: Boolean) = update { it.copy(showRecentDone = show) }
+    fun setOverviewShowDone(show: Boolean) = update { it.copy(overviewShowDone = show) }
 
     fun setSuggestionsCollapsed(collapsed: Boolean) = update { it.copy(suggestionsCollapsed = collapsed) }
 
