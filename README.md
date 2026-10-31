@@ -3,6 +3,8 @@
 Native Android-App (Kotlin, Jetpack Compose) für Einkaufs- und Packlisten – ohne Konto, ohne Werbung,
 alle Daten bleiben auf dem Handy.
 
+**➡️ [Neueste Version herunterladen](../../releases/latest)** (`Einkaufsliste.apk`)
+
 ## Funktionen
 
 - **Mehrere Listen** – z. B. pro Laden, für die Drogerie oder als Packliste, jeweils mit eigenem Symbol.
@@ -14,9 +16,9 @@ alle Daten bleiben auf dem Handy.
   dort Artikel ein. Die Reihenfolge änderst du über ⋮ → „Reihenfolge der Listen“.
 - **Vorschläge beim Eintippen** – alles, was du einmal eingetragen hast, wird gemerkt. Ab dem zweiten Buchstaben
   schlägt die App passende Artikel aus allen Listen **mit demselben Symbol** vor (z. B. alle 🛒-Listen; Artikel
-  dieser Liste zuerst, Artikel anderer Listen mit deren Namen). Ein Tipp auf den Vorschlag fügt den Artikel hinzu. Über die Kopfzeile lassen sich die Vorschläge ein- und
-  ausklappen; die Einstellung bleibt gespeichert.
-- **Richtige Liste** – trägst du einen Artikel ein, der bisher immer auf einer anderen Liste stand (z. B. Zahnpasta
+  dieser Liste zuerst, Artikel anderer Listen mit deren Namen). Ein Tipp auf den Vorschlag fügt den Artikel hinzu.
+  Über die Kopfzeile lassen sich die Vorschläge ein- und ausklappen; die Einstellung bleibt gespeichert.
+- **Richtige Liste** – trägst du einen Artikel ein, der bisher auf einer anderen Liste stand (z. B. Zahnpasta
   bei dm, während du Rewe offen hast), fragt die App, ob er lieber dort hin soll.
 - **Erledigt markieren per Wischgeste** – Artikel **zur Seite wischen** (egal ob links oder rechts) = erledigt bzw.
   zurückholen. Ein normales Antippen öffnet nur den Bearbeiten-Dialog (Name, Menge/Notiz); nur dort kann ein Artikel
@@ -41,7 +43,7 @@ alle Daten bleiben auf dem Handy.
 Bei jedem Push baut GitHub Actions automatisch die APK und veröffentlicht sie unter
 **Releases** (`Einkaufsliste.apk`).
 
-1. Auf dem Handy die neueste Release-Seite öffnen und `Einkaufsliste.apk` herunterladen.
+1. Auf dem Handy die [neueste Release-Seite](../../releases/latest) öffnen und `Einkaufsliste.apk` herunterladen.
 2. Datei öffnen. Beim ersten Mal fragt Android, ob der Browser/Dateimanager Apps installieren darf → erlauben.
 3. Für Updates einfach die neue APK genauso installieren – die Listen bleiben erhalten.
 
