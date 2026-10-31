@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.CardDefaults
@@ -37,6 +38,7 @@ import androidx.compose.material3.SuggestionChipDefaults
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,6 +63,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import de.einkaufsliste.app.data.AppViewModel
 import de.einkaufsliste.app.data.Item
+import de.einkaufsliste.app.data.ShoppingList
 
 /**
  * Ein Artikel. Nach rechts wischen = erledigt umschalten, nach links wischen = löschen,
@@ -175,10 +178,38 @@ fun AddItemBar(
     var text by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
+    // Artikel, der bisher auf einer anderen Liste stand -> erst nachfragen
+    var askMove by remember { mutableStateOf<Pair<String, ShoppingList>?>(null) }
+
+    fun addTo(targetId: String, name: String) {
+        if (!vm.addItem(targetId, name)) {
+            val where = if (targetId == listId) "der Liste" else "„${vm.list(targetId)?.name}“"
+            onMessage("„${name.trim()}“ steht schon auf $where")
+        } else if (targetId != listId) {
+            onMessage("„${name.trim()}“ zu ${vm.list(targetId)?.name} hinzugefügt")
+        }
+    }
+
     fun add(name: String) {
         if (name.isBlank()) return
-        if (!vm.addItem(listId, name)) onMessage("„${name.trim()}“ steht schon auf der Liste")
+        val other = vm.usualListFor(listId, name)
+        if (other != null) askMove = name.trim() to other else addTo(listId, name)
         text = ""
+    }
+
+    askMove?.let { (name, other) ->
+        val here = vm.list(listId)
+        AlertDialog(
+            onDismissRequest = { askMove = null },
+            title = { Text("Lieber auf „${other.name}“?") },
+            text = { Text("„$name“ stand bisher auf ${other.emoji} ${other.name}. Wo möchtest du es eintragen?") },
+            confirmButton = {
+                TextButton(onClick = { askMove = null; addTo(other.id, name) }) { Text("Auf ${other.name}") }
+            },
+            dismissButton = {
+                TextButton(onClick = { askMove = null; addTo(listId, name) }) { Text("Hier auf ${here?.name ?: "dieser Liste"}") }
+            },
+        )
     }
 
     if (autoFocus) LaunchedEffect(Unit) { focusRequester.requestFocus() }

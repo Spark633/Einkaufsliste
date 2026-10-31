@@ -13,6 +13,8 @@ alle Daten bleiben auf dem Handy.
 - **Vorschläge beim Eintippen** – jede Liste merkt sich ihre Artikel. Sobald du tippst, schlägt sie passende Artikel
   vor, die schon einmal auf **dieser** Liste standen (sortiert danach, wie oft du sie kaufst). Ein Tipp auf den
   Vorschlag fügt den Artikel hinzu.
+- **Richtige Liste** – trägst du einen Artikel ein, der bisher immer auf einer anderen Liste stand (z. B. Zahnpasta
+  bei dm, während du Rewe offen hast), fragt die App, ob er lieber dort hin soll.
 - **Erledigt markieren per Wischgeste** – Artikel **nach rechts wischen** = erledigt (bzw. zurückholen),
   **nach links wischen** = löschen (mit Sicherheitsabfrage). Ein normales Antippen öffnet nur den Bearbeiten-Dialog (Name, Menge/Notiz),
   dadurch wird nichts versehentlich abgehakt. Vor jedem Löschen kommt eine Rückfrage, danach lässt sich jede Aktion über „Rückgängig“ zurücknehmen.

@@ -154,6 +154,19 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     /* ---------------- Vorschläge ---------------- */
 
+    /**
+     * Liste, auf der ein Artikel bisher stand, wenn er auf [listId] noch nie eingetragen wurde
+     * (z. B. Zahnpasta bisher immer bei dm). Sonst null.
+     */
+    fun usualListFor(listId: String, name: String): ShoppingList? {
+        val h = data.history[keyOf(name)] ?: return null
+        if ((h.lists[listId] ?: 0) > 0) return null
+        return h.lists.entries
+            .filter { it.key != listId && it.value > 0 }
+            .sortedByDescending { it.value }
+            .firstNotNullOfOrNull { list(it.key) }
+    }
+
     /** Vorschläge nur aus Artikeln, die schon einmal auf genau dieser Liste standen. */
     fun suggestions(listId: String, query: String): List<HistoryEntry> {
         val list = list(listId) ?: return emptyList()
