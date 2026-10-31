@@ -255,11 +255,11 @@ fun AddItemBar(
                     }
                     if (!collapsed) FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         suggestions.forEach { h ->
-                            // Artikel von anderen Listen bekommen das Symbol ihrer üblichen Liste
+                            // Artikel von anderen Listen bekommen den Namen ihrer üblichen Liste
                             val other = vm.usualListFor(listId, h.name)
                             SuggestionChip(
                                 onClick = { add(h.name) },
-                                label = { Text(if (other != null) "${h.name}  ${other.emoji}" else h.name, fontSize = 15.sp) },
+                                label = { Text(if (other != null) "${h.name} · ${other.name}" else h.name, fontSize = 15.sp) },
                                 colors = SuggestionChipDefaults.suggestionChipColors(
                                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 ),

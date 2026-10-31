@@ -12,7 +12,7 @@ alle Daten bleiben auf dem Handy.
   dort Artikel ein. Die Reihenfolge änderst du über ⋮ → „Reihenfolge der Listen“.
 - **Vorschläge beim Eintippen** – alles, was du einmal eingetragen hast, wird gemerkt. Ab dem zweiten Buchstaben
   schlägt die App passende Artikel aus allen Listen **mit demselben Symbol** vor (z. B. alle 🛒-Listen; Artikel
-  dieser Liste zuerst, Artikel anderer Listen mit deren Symbol). Ein Tipp auf den Vorschlag fügt den Artikel hinzu. Über die Kopfzeile lassen sich die Vorschläge ein- und
+  dieser Liste zuerst, Artikel anderer Listen mit deren Namen). Ein Tipp auf den Vorschlag fügt den Artikel hinzu. Über die Kopfzeile lassen sich die Vorschläge ein- und
   ausklappen; die Einstellung bleibt gespeichert.
 - **Richtige Liste** – trägst du einen Artikel ein, der bisher immer auf einer anderen Liste stand (z. B. Zahnpasta
   bei dm, während du Rewe offen hast), fragt die App, ob er lieber dort hin soll.
