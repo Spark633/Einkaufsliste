@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -296,17 +297,27 @@ fun PasteImportDialog(onDismiss: () -> Unit, onScan: () -> Unit, onPickImage: ()
     )
 }
 
-/** Fragt, ob eine empfangene Liste neu angelegt oder in eine gleichnamige übernommen wird. */
+/**
+ * Eine empfangene Liste übernehmen: als neue Liste (Name frei wählbar) oder in eine
+ * bestehende Liste – ergänzen (nur fehlende Artikel dazu) oder ersetzen (genau wie geteilt).
+ */
 @Composable
 fun ImportChoiceDialog(
     shared: SharedList,
     lists: List<ShoppingList>,
+    suggestedName: String,
     onDismiss: () -> Unit,
-    onNew: () -> Unit,
+    onNew: (name: String) -> Unit,
     onMerge: (ShoppingList) -> Unit,
+    onReplace: (ShoppingList) -> Unit,
 ) {
-    val same = lists.find { keyOf(it.name) == keyOf(shared.name) }
+    var name by remember { mutableStateOf(suggestedName) }
+    // Ziel für Ergänzen/Ersetzen: vorausgewählt ist die gleichnamige Liste
+    var targetId by remember { mutableStateOf(lists.find { keyOf(it.name) == keyOf(shared.name) }?.id) }
+    var confirmReplace by remember { mutableStateOf(false) }
+    val target = lists.find { it.id == targetId }
     val preview = shared.items.take(8).joinToString(", ") { it.first } + if (shared.items.size > 8) " …" else ""
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Geteilte Liste empfangen") },
@@ -318,15 +329,63 @@ fun ImportChoiceDialog(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(Modifier.height(16.dp))
-                OutlinedButton(onClick = onNew, modifier = Modifier.fillMaxWidth()) { Text("Als neue Liste anlegen") }
-                if (same != null) {
-                    OutlinedButton(onClick = { onMerge(same) }, modifier = Modifier.fillMaxWidth()) {
-                        Text("In „${same.name}“ übernehmen")
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it.take(60) },
+                    label = { Text("Name der neuen Liste") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Button(enabled = name.isNotBlank(), onClick = { onNew(name) }, modifier = Modifier.fillMaxWidth()) {
+                    Text("Als neue Liste anlegen")
+                }
+                if (lists.isNotEmpty()) {
+                    Spacer(Modifier.height(16.dp))
+                    HorizontalDivider()
+                    Spacer(Modifier.height(8.dp))
+                    Text("Oder in eine bestehende Liste übernehmen:", style = MaterialTheme.typography.labelMedium)
+                    LazyColumn(Modifier.heightIn(max = 180.dp)) {
+                        items(lists, key = { it.id }) { l ->
+                            Row(
+                                Modifier.fillMaxWidth().clickable { targetId = l.id },
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                RadioButton(selected = l.id == targetId, onClick = { targetId = l.id })
+                                Text("${l.emoji} ${l.name}", maxLines = 1)
+                            }
+                        }
                     }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedButton(enabled = target != null, onClick = { target?.let(onMerge) }, modifier = Modifier.weight(1f)) {
+                            Text("Ergänzen")
+                        }
+                        OutlinedButton(enabled = target != null, onClick = { confirmReplace = true }, modifier = Modifier.weight(1f)) {
+                            Text("Ersetzen")
+                        }
+                    }
+                    Text(
+                        "Ergänzen: fehlende Artikel kommen dazu, nichts wird gelöscht.\n" +
+                            "Ersetzen: die Liste sieht danach genau so aus wie die geteilte.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
                 }
             }
         },
         confirmButton = {},
         dismissButton = { TextButton(onClick = onDismiss) { Text("Abbrechen") } },
     )
+
+    if (confirmReplace && target != null) {
+        val removed = target.items.count { item -> shared.items.none { keyOf(it.first) == keyOf(item.name) } }
+        ConfirmDialog(
+            title = "„${target.name}“ ersetzen?",
+            text = "Die Liste hat danach genau die ${shared.items.size} geteilten Artikel." +
+                if (removed > 0) " $removed bisherige Artikel (auch erledigte) werden entfernt." else "",
+            confirmLabel = "Ersetzen",
+            onDismiss = { confirmReplace = false },
+            onConfirm = { confirmReplace = false; onReplace(target) },
+        )
+    }
 }

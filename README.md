@@ -36,8 +36,13 @@ alle Daten bleiben auf dem Handy.
     Ein QR-Code lässt sich auch aus einem Bild importieren, z. B. einem Screenshot: „Listen importieren“ →
     „QR-Code aus Bild / Screenshot“, oder das Bild direkt an die App *Einkaufsliste* teilen.
 
-  Eine einzelne Liste kann als neue Liste angelegt oder in eine gleichnamige übernommen werden; bei mehreren Listen
-  werden vorhandene ergänzt und die übrigen neu angelegt.
+  Beim Import einer einzelnen Liste kannst du
+  - sie als **neue Liste** anlegen und dabei den Namen frei wählen,
+  - eine bestehende Liste **ergänzen** (fehlende Artikel kommen dazu, nichts wird gelöscht) oder
+  - eine bestehende Liste **ersetzen** (sie sieht danach genau so aus wie die geteilte; mit Sicherheitsabfrage).
+
+  Bei mehreren Listen werden vorhandene (gleicher Name) ergänzt oder – wenn gewünscht – ersetzt, die übrigen neu
+  angelegt. Ersetzen lässt sich über „Rückgängig“ zurücknehmen.
 - **Vorschläge verwalten** – falsch geschriebene oder nicht mehr gebrauchte Vorschläge lassen sich löschen.
 - Heller und dunkler Modus (folgt der Systemeinstellung).
 

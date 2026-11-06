@@ -218,10 +218,13 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         return true
     }
 
-    fun importAsNew(shared: SharedList): String {
-        val nameTaken = data.lists.any { keyOf(it.name) == keyOf(shared.name) }
+    /** Vorschlag für den Namen einer importierten Liste, ohne mit einer vorhandenen zu kollidieren. */
+    fun importName(shared: SharedList): String =
+        if (data.lists.any { keyOf(it.name) == keyOf(shared.name) }) "${shared.name} (geteilt)" else shared.name
+
+    fun importAsNew(shared: SharedList, name: String? = null): String {
         val list = ShoppingList(
-            name = if (nameTaken) "${shared.name} (geteilt)" else shared.name,
+            name = name?.let(::cleanName)?.ifEmpty { null } ?: importName(shared),
             emoji = shared.emoji,
             inOverview = false,
             items = shared.items.map { (name, qty) -> Item(name = name, qty = qty) },
@@ -239,11 +242,30 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         return added
     }
 
-    /** Mehrere Listen übernehmen: gleichnamige Listen werden ergänzt, andere neu angelegt. */
-    fun importAll(shared: List<SharedList>) {
+    /**
+     * Ersetzt den Inhalt einer bestehenden Liste durch die geteilte: danach stehen genau die
+     * geteilten Artikel darauf, alle bisherigen (auch erledigte) sind weg.
+     */
+    fun replaceWith(shared: SharedList, listId: String) {
+        update { d ->
+            val replaced = d.copy(lists = d.lists.map { l ->
+                if (l.id != listId) l
+                else l.copy(items = shared.items.map { (name, qty) -> Item(name = name, qty = qty) })
+            })
+            shared.items.fold(replaced) { acc, (name, _) -> remember(acc, name, listId) }
+        }
+        pendingImport = null
+    }
+
+    /** Mehrere Listen übernehmen: gleichnamige werden ergänzt (oder ersetzt), andere neu angelegt. */
+    fun importAll(shared: List<SharedList>, replace: Boolean = false) {
         shared.forEach { s ->
             val same = data.lists.find { keyOf(it.name) == keyOf(s.name) }
-            if (same != null) importInto(s, same.id) else importAsNew(s)
+            when {
+                same == null -> importAsNew(s)
+                replace -> replaceWith(s, same.id)
+                else -> importInto(s, same.id)
+            }
         }
         pendingImport = null
     }

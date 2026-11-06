@@ -192,7 +192,15 @@ fun readQrFromImage(context: Context, uri: Uri, onResult: (String) -> Unit, onEr
 
 /** Mehrere empfangene Listen auf einmal übernehmen. */
 @Composable
-fun MultiImportDialog(shared: List<SharedList>, lists: List<ShoppingList>, onDismiss: () -> Unit, onImport: () -> Unit) {
+fun MultiImportDialog(
+    shared: List<SharedList>,
+    lists: List<ShoppingList>,
+    onDismiss: () -> Unit,
+    onImport: (replace: Boolean) -> Unit,
+) {
+    var replace by remember { mutableStateOf(false) }
+    var confirmReplace by remember { mutableStateOf(false) }
+    val existing = shared.count { s -> lists.any { it.name.equals(s.name, ignoreCase = true) } }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("${shared.size} Listen empfangen") },
@@ -205,21 +213,47 @@ fun MultiImportDialog(shared: List<SharedList>, lists: List<ShoppingList>, onDis
                             Text("${s.emoji} ${s.name}", fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
                             Spacer(Modifier.width(8.dp))
                             Text(
-                                "${s.items.size} Artikel" + if (exists) " · ergänzen" else " · neu",
+                                "${s.items.size} Artikel" + when {
+                                    !exists -> " · neu"
+                                    replace -> " · ersetzen"
+                                    else -> " · ergänzen"
+                                },
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
                     }
                 }
                 Spacer(Modifier.height(8.dp))
+                if (existing > 0) {
+                    Row(
+                        Modifier.fillMaxWidth().clickable { replace = !replace },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Checkbox(checked = replace, onCheckedChange = null, modifier = Modifier.padding(end = 8.dp))
+                        Text("Vorhandene Listen ersetzen statt ergänzen")
+                    }
+                }
                 Text(
-                    "Listen, die du schon hast, werden um fehlende Artikel ergänzt. Die anderen werden neu angelegt.",
+                    if (replace) "Listen, die du schon hast, sehen danach genau so aus wie die geteilten. Die anderen werden neu angelegt."
+                    else "Listen, die du schon hast, werden um fehlende Artikel ergänzt. Die anderen werden neu angelegt.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         },
-        confirmButton = { TextButton(onClick = onImport) { Text("Übernehmen") } },
+        confirmButton = {
+            TextButton(onClick = { if (replace) confirmReplace = true else onImport(false) }) { Text("Übernehmen") }
+        },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Abbrechen") } },
     )
+
+    if (confirmReplace) {
+        ConfirmDialog(
+            title = "$existing Listen ersetzen?",
+            text = "Artikel, die in den geteilten Listen fehlen, werden bei dir entfernt (auch erledigte).",
+            confirmLabel = "Ersetzen",
+            onDismiss = { confirmReplace = false },
+            onConfirm = { confirmReplace = false; onImport(true) },
+        )
+    }
 }

@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import de.einkaufsliste.app.data.AppViewModel
 import de.einkaufsliste.app.data.Item
 import de.einkaufsliste.app.data.ShareCode
+import de.einkaufsliste.app.data.SharedList
 import de.einkaufsliste.app.data.ShoppingList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -79,6 +80,13 @@ class AppActions(
             if (result == SnackbarResult.ActionPerformed) vm.restore(before)
         }
     }
+
+    /** Empfangene Liste(n) übernehmen; mit „Rückgängig“, falls etwas ersetzt wurde. */
+    fun replaceImport(shared: SharedList, target: ShoppingList) =
+        undoable("„${target.name}“ ersetzt") { vm.replaceWith(shared, target.id) }
+
+    fun importAll(shared: List<SharedList>, replace: Boolean) =
+        undoable("${shared.size} Listen übernommen") { vm.importAll(shared, replace) }
 
     fun toggle(listId: String, item: Item) =
         undoable(if (item.done) "„${item.name}“ zurückgeholt" else "„${item.name}“ erledigt") { vm.toggleDone(listId, item.id) }
@@ -270,22 +278,24 @@ fun App(vm: AppViewModel) {
             shared = pending,
             lists = vm.data.lists,
             onDismiss = { vm.pendingImport = null },
-            onImport = {
-                vm.importAll(pending)
-                actions.message("${pending.size} Listen übernommen")
-            },
+            onImport = { replace -> actions.importAll(pending, replace) },
         )
     }
     pending?.singleOrNull()?.let { shared ->
         ImportChoiceDialog(
             shared = shared,
             lists = vm.data.lists,
+            suggestedName = vm.importName(shared),
             onDismiss = { vm.pendingImport = null },
-            onNew = { openListId = vm.importAsNew(shared) },
+            onNew = { name -> openListId = vm.importAsNew(shared, name) },
             onMerge = { target ->
                 val added = vm.importInto(shared, target.id)
                 openListId = target.id
                 actions.message("$added Artikel übernommen")
+            },
+            onReplace = { target ->
+                actions.replaceImport(shared, target)
+                openListId = target.id
             },
         )
     }
