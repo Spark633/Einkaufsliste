@@ -264,7 +264,7 @@ fun HistoryDialog(vm: AppViewModel, onDismiss: () -> Unit) {
 
 /** Geteilte Nachricht per Einfügen importieren. */
 @Composable
-fun PasteImportDialog(onDismiss: () -> Unit, onScan: () -> Unit, onImport: (String) -> Unit) {
+fun PasteImportDialog(onDismiss: () -> Unit, onScan: () -> Unit, onPickImage: () -> Unit, onImport: (String) -> Unit) {
     val clipboard = LocalClipboardManager.current
     var text by remember {
         mutableStateOf(clipboard.getText()?.text?.takeIf { "EKL1:" in it || "EKL2:" in it } ?: "")
@@ -275,6 +275,9 @@ fun PasteImportDialog(onDismiss: () -> Unit, onScan: () -> Unit, onImport: (Stri
         text = {
             Column {
                 Button(onClick = onScan, modifier = Modifier.fillMaxWidth()) { Text("🔳  QR-Code scannen") }
+                OutlinedButton(onClick = onPickImage, modifier = Modifier.fillMaxWidth()) {
+                    Text("🖼️  QR-Code aus Bild / Screenshot")
+                }
                 Spacer(Modifier.height(16.dp))
                 Text(
                     "Oder die geteilte Nachricht hier einfügen (lange tippen → Einfügen).",

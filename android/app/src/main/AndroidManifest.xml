@@ -8,10 +8,10 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
 
-        <!-- QR-Scanner-Modul der Play-Dienste schon bei der Installation laden -->
+        <!-- QR-Module der Play-Dienste (Kamera-Scanner und Bilderkennung) schon bei der Installation laden -->
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
-            android:value="barcode_ui" />
+            android:value="barcode_ui,barcode" />
 
         <activity
             android:name=".MainActivity"
@@ -27,6 +27,12 @@
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
+            </intent-filter>
+            <!-- Screenshot oder Foto eines QR-Codes an die App teilen -->
+            <intent-filter android:label="@string/import_label">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
     </application>

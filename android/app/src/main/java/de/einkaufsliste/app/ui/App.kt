@@ -2,7 +2,11 @@ package de.einkaufsliste.app.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -117,6 +121,11 @@ class AppActions(
         context.startActivity(Intent.createChooser(send, "Listen teilen über …"))
     }
 
+    /** QR-Code aus einem Bild (z. B. Screenshot) importieren. */
+    fun importImage(uri: Uri) = readQrFromImage(context, uri, onResult = { text ->
+        if (!vm.receiveShared(text)) message("Dieser QR-Code enthält keine Liste")
+    }, onError = ::message)
+
     fun scan() = scanQr(context, onResult = { text ->
         if (!vm.receiveShared(text)) message("Dieser QR-Code enthält keine Liste")
     }, onError = ::message)
@@ -133,6 +142,10 @@ fun App(vm: AppViewModel) {
 
     val actions = remember(vm) {
         AppActions(vm, snackbar, scope, context, openList = { openListId = it }, showDialog = { dialog = it })
+    }
+
+    val pickImage = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) actions.importImage(uri)
     }
 
     val openList = openListId?.let { vm.list(it) }
@@ -241,6 +254,10 @@ fun App(vm: AppViewModel) {
         DialogState.PasteImport -> PasteImportDialog(
             onDismiss = close,
             onScan = { close(); actions.scan() },
+            onPickImage = {
+                close()
+                pickImage.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
             onImport = { text ->
                 if (vm.receiveShared(text)) close() else actions.message("Kein gültiger Listen-Code gefunden")
             },

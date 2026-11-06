@@ -33,6 +33,8 @@ alle Daten bleiben auf dem Handy.
     drückt die Nachricht lange → Teilen → *Einkaufsliste*, oder kopiert sie und nutzt „Listen importieren“.
   - **als QR-Code anzeigen**: Auf dem anderen Handy ⋮ → „Listen importieren“ → „QR-Code scannen“ (nutzt den Scanner
     der Google Play-Dienste, keine Kamera-Berechtigung nötig).
+    Ein QR-Code lässt sich auch aus einem Bild importieren, z. B. einem Screenshot: „Listen importieren“ →
+    „QR-Code aus Bild / Screenshot“, oder das Bild direkt an die App *Einkaufsliste* teilen.
 
   Eine einzelne Liste kann als neue Liste angelegt oder in eine gleichnamige übernommen werden; bei mehreren Listen
   werden vorhandene ergänzt und die übrigen neu angelegt.

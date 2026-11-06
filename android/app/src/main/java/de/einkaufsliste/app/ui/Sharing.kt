@@ -2,6 +2,7 @@ package de.einkaufsliste.app.ui
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,9 +38,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.mlkit.vision.barcode.BarcodeScannerOptions
+import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
+import com.google.mlkit.vision.common.InputImage
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -143,7 +147,8 @@ fun QrDialog(lists: List<ShoppingList>, onDismiss: () -> Unit, onSendText: () ->
                     )
                     Spacer(Modifier.height(12.dp))
                     Text(
-                        "Auf dem anderen Handy in der Einkaufsliste-App: ⋮ → „Listen importieren“ → „QR-Code scannen“.",
+                        "Auf dem anderen Handy in der Einkaufsliste-App: ⋮ → „Listen importieren“ → „QR-Code scannen“. " +
+                            "Oder einen Screenshot machen und dort „QR-Code aus Bild“ wählen.",
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -166,6 +171,23 @@ fun scanQr(context: Context, onResult: (String) -> Unit, onError: (String) -> Un
     GmsBarcodeScanning.getClient(context, options).startScan()
         .addOnSuccessListener { barcode -> barcode.rawValue?.let(onResult) }
         .addOnFailureListener { onError("QR-Scanner nicht verfügbar – bitte Google Play-Dienste aktualisieren") }
+}
+
+/** QR-Code aus einem Bild lesen, z. B. aus einem Screenshot. */
+fun readQrFromImage(context: Context, uri: Uri, onResult: (String) -> Unit, onError: (String) -> Unit) {
+    val image = try {
+        InputImage.fromFilePath(context, uri)
+    } catch (e: Exception) {
+        onError("Das Bild konnte nicht geöffnet werden")
+        return
+    }
+    val options = BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build()
+    BarcodeScanning.getClient(options).process(image)
+        .addOnSuccessListener { codes ->
+            val text = codes.firstNotNullOfOrNull { it.rawValue }
+            if (text != null) onResult(text) else onError("Auf dem Bild wurde kein QR-Code gefunden")
+        }
+        .addOnFailureListener { onError("QR-Erkennung nicht verfügbar – bitte Google Play-Dienste aktualisieren") }
 }
 
 /** Mehrere empfangene Listen auf einmal übernehmen. */
