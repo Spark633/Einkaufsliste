@@ -22,6 +22,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,7 @@ sealed interface DialogState {
     data class QuickAdd(val listId: String) : DialogState
     data object Arrange : DialogState
     data object History : DialogState
+    data object About : DialogState
     data object PasteImport : DialogState
     data class Share(val preselected: Set<String>) : DialogState
     data class Qr(val listIds: List<String>) : DialogState
@@ -156,6 +158,19 @@ fun App(vm: AppViewModel) {
         if (uri != null) actions.importImage(uri)
     }
 
+    // Beim Start einmal nach einer neuen Version schauen und ggf. Bescheid geben
+    LaunchedEffect(Unit) {
+        val release = fetchLatestRelease() ?: return@LaunchedEffect
+        if (isNewer(release.version, currentVersion(context))) {
+            val result = snackbar.showSnackbar(
+                "Neue Version ${release.version} verfügbar",
+                actionLabel = "Laden",
+                duration = SnackbarDuration.Long,
+            )
+            if (result == SnackbarResult.ActionPerformed) openDownload(context, release.downloadUrl)
+        }
+    }
+
     val openList = openListId?.let { vm.list(it) }
     if (openList != null) {
         BackHandler { openListId = null }
@@ -248,6 +263,7 @@ fun App(vm: AppViewModel) {
         }
         DialogState.Arrange -> ArrangeDialog(vm, onDismiss = close)
         DialogState.History -> HistoryDialog(vm, onDismiss = close)
+        DialogState.About -> AboutDialog(onDismiss = close)
         is DialogState.Share -> ShareDialog(
             lists = vm.data.lists,
             preselected = d.preselected,

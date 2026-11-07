@@ -44,6 +44,8 @@ alle Daten bleiben auf dem Handy.
   Bei mehreren Listen werden vorhandene (gleicher Name) ergänzt oder – wenn gewünscht – ersetzt, die übrigen neu
   angelegt. Ersetzen lässt sich über „Rückgängig“ zurücknehmen.
 - **Vorschläge verwalten** – falsch geschriebene oder nicht mehr gebrauchte Vorschläge lassen sich löschen.
+- **Version & Updates** – über ⋮ siehst du die installierte Version und kannst die neueste direkt herunterladen.
+  Beim Start meldet die App sich, wenn es eine neue Version gibt.
 - Heller und dunkler Modus (folgt der Systemeinstellung).
 
 ## Installation

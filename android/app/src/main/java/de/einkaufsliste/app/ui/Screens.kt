@@ -127,6 +127,7 @@ fun HomeScreen(vm: AppViewModel, a: AppActions, snackbar: SnackbarHostState) {
                         "📤  Listen teilen / exportieren" to { a.share(null) },
                         "📥  Listen importieren" to { a.showDialog(DialogState.PasteImport) },
                         "💡  Vorschläge verwalten" to { a.showDialog(DialogState.History) },
+                        "ℹ️  Version & Updates" to { a.showDialog(DialogState.About) },
                         (if (data.overviewShowDone) "🙈  Erledigte in „Zusammen“ ausblenden" else "👁️  Erledigte in „Zusammen“ immer zeigen") to {
                             vm.setOverviewShowDone(!data.overviewShowDone)
                         },
